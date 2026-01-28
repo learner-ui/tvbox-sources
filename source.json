@@ -1,0 +1,36 @@
+[
+  {
+    "id": "4kvm-source",
+    "name": "4K影视",
+    "api": "https://www.4kvm.me",
+    "nsfw": false,
+    "type": 1,
+    "extra": {
+      "gfw": false,
+      "searchLimit": 20,
+      "js": {
+        "category": [
+          { "text": "电影", "id": "movies" },
+          { "text": "电视剧", "id": "tvshows" },
+          { "text": "美剧", "id": "classify/meiju" },
+          { "text": "国产剧", "id": "classify/guochan" },
+          { "text": "韩剧", "id": "classify/hanju" },
+          { "text": "番剧", "id": "classify/fanju" },
+          { "text": "高分电影", "id": "imdb" },
+          { "text": "热门播放", "id": "trending" }
+        ],
+        "home": "const cate=env.get('category');const page=env.get('page');let url=`${env.baseUrl}/${cate}`;if(page>1)url=`${url}/page/${page}`;const html=await req(url);const $=kitty.load(html);const movies=[];$('article.item').each(function(){const poster=$(this).find('.poster');const id=poster.find('a').attr('href')||'';const title=$(this).find('.data h3 a').text().trim()||poster.find('img').attr('alt')||'';const cover=poster.find('img').attr('src')||'';const rating=$(this).find('.rating').text().trim();const remark=rating?`⭐${rating}`:'';if(id)movies.push({id,title,cover,remark})});return movies",
+        "detail": "const id=env.get('movieId');const url=id.startsWith('http')?id:`${env.baseUrl}${id}`;const html=await req(url);const $=kitty.load(html);const title=$('.sheader .data h1').text().trim()||$('title').text().split('-')[0].trim();const cover=$('.poster img').attr('src')||'';const desc=$('.wp-content p').first().text().trim()||$('.texto').text().trim();const playlist=[];const episodes=[];$('#playeroptionsul li').each(function(){const postId=$(this).attr('data-post');const type=$(this).attr('data-type');const nume=$(this).attr('data-nume');const text=$(this).find('.title').text().trim()||'播放';if(postId){const playerUrl=`${env.baseUrl}/artplayer?mvsource=${parseInt(nume)-1}&id=${postId}&type=hls`;episodes.push({id:'$'+playerUrl,text})}});if(!episodes.length)episodes.push({id:'$'+url,text:'播放'});playlist.push({title:'4K影视',videos:episodes});return{id,title,cover,desc,playlist}",
+        "search": "const wd=env.get('keyword');const url=`${env.baseUrl}/?s=${encodeURIComponent(wd)}`;const html=await req(url);const $=kitty.load(html);const movies=[];$('article.item, .result-item article').each(function(){const a=$(this).find('a').first();const id=a.attr('href')||'';const title=$(this).find('.data h3 a, .title a').text().trim()||$(this).find('img').attr('alt')||'';const cover=$(this).find('img').attr('src')||'';if(id)movies.push({id,title,cover,remark:''})});return movies",
+        "parseIframe": "const iframe=env.get('iframe');try{const html=await req(iframe);const match=html.match(/url:['\"]([^'\"]+\\.(?:m3u8|mp4|svg)[^'\"]*)['\"]|url:\\s*['\"]([^'\"]+)['\"]|source:\\s*['\"]([^'\"]+)['\"]|file:\\s*['\"]([^'\"]+)['\"]|video_url\\s*=\\s*['\"]([^'\"]+)['\"]/i);if(match){const url=match[1]||match[2]||match[3]||match[4]||match[5];if(url)return url}return ''}catch(e){return ''}"
+      },
+      "sniffer": {
+        "mode": 0,
+        "timeout": 25000,
+        "customRegex": "https?://[^\"'\\s]+\\.(m3u8|mp4|flv|svg)",
+        "exclude": "google|facebook|analytics|doubleclick|ads|monetag",
+        "script": "document.querySelector('video')?.play();"
+      }
+    }
+  }
+]
