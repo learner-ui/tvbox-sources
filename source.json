@@ -1,8 +1,8 @@
 [
   {
-    "id": "4kvm-source",
-    "name": "4K影视",
-    "api": "https://www.4kvm.me",
+    "id": "netflixgc-source",
+    "name": "奈飞工厂",
+    "api": "https://www.netflixgc.org",
     "nsfw": false,
     "type": 1,
     "extra": {
@@ -10,25 +10,22 @@
       "searchLimit": 20,
       "js": {
         "category": [
-          { "text": "电影", "id": "movies" },
-          { "text": "电视剧", "id": "tvshows" },
-          { "text": "美剧", "id": "classify/meiju" },
-          { "text": "国产剧", "id": "classify/guochan" },
-          { "text": "韩剧", "id": "classify/hanju" },
-          { "text": "番剧", "id": "classify/fanju" },
-          { "text": "高分电影", "id": "imdb" },
-          { "text": "热门播放", "id": "trending" }
+          { "text": "电影", "id": "1" },
+          { "text": "连续剧", "id": "2" },
+          { "text": "纪录片", "id": "24" },
+          { "text": "漫剧", "id": "3" },
+          { "text": "综艺", "id": "23" }
         ],
-        "home": "const cate=env.get('category');const page=env.get('page');let url=`${env.baseUrl}/${cate}`;if(page>1)url=`${url}/page/${page}`;const html=await req(url);const $=kitty.load(html);const movies=[];$('article.item').each(function(){const poster=$(this).find('.poster');const id=poster.find('a').attr('href')||'';const title=$(this).find('.data h3 a').text().trim()||poster.find('img').attr('alt')||'';const cover=poster.find('img').attr('src')||'';const rating=$(this).find('.rating').text().trim();const remark=rating?`⭐${rating}`:'';if(id)movies.push({id,title,cover,remark})});return movies",
-        "detail": "const id=env.get('movieId');const url=id.startsWith('http')?id:`${env.baseUrl}${id}`;const html=await req(url);const $=kitty.load(html);const title=$('.sheader .data h1').text().trim()||$('title').text().split('-')[0].trim();const cover=$('.poster img').attr('src')||'';const desc=$('.wp-content p').first().text().trim()||$('.texto').text().trim();const playlist=[];const episodes=[];$('#playeroptionsul li').each(function(){const postId=$(this).attr('data-post');const type=$(this).attr('data-type');const nume=$(this).attr('data-nume');const text=$(this).find('.title').text().trim()||'播放';if(postId){const playerUrl=`${env.baseUrl}/artplayer?mvsource=${parseInt(nume)-1}&id=${postId}&type=hls`;episodes.push({id:'$'+playerUrl,text})}});if(!episodes.length)episodes.push({id:'$'+url,text:'播放'});playlist.push({title:'4K影视',videos:episodes});return{id,title,cover,desc,playlist}",
-        "search": "const wd=env.get('keyword');const url=`${env.baseUrl}/?s=${encodeURIComponent(wd)}`;const html=await req(url);const $=kitty.load(html);const movies=[];$('article.item, .result-item article').each(function(){const a=$(this).find('a').first();const id=a.attr('href')||'';const title=$(this).find('.data h3 a, .title a').text().trim()||$(this).find('img').attr('alt')||'';const cover=$(this).find('img').attr('src')||'';if(id)movies.push({id,title,cover,remark:''})});return movies",
-        "parseIframe": "const iframe=env.get('iframe');try{const html=await req(iframe);const svgMatch=html.match(/source:\\s*['\"]?(https:\\/\\/play\\.kvmplay\\.org\\/ws\\/[^'\"\\s]+\\.svg)/);if(svgMatch&&svgMatch[1]){const svgUrl=svgMatch[1];const tokenMatch=html.match(/token:\\s*['\"]([^'\"]+)['\"]/);const expiresMatch=html.match(/expires:\\s*['\"]([^'\"]+)['\"]/);const nonceMatch=html.match(/nonce:\\s*['\"]([^'\"]+)['\"]/);const body={source:svgUrl,token:tokenMatch?tokenMatch[1]:'',expires:expiresMatch?expiresMatch[1]:'',nonce:nonceMatch?nonceMatch[1]:''};const resp=await req(svgUrl,{method:'POST',data:body});const data=JSON.parse(resp);if(data.url)return data.url}const m3u8=html.match(/https?:\\/\\/[^'\"\\s]+\\.m3u8[^'\"\\s]*/);if(m3u8&&m3u8[0])return m3u8[0];return ''}catch(e){return ''}"
+        "home": "const cate=env.get('category');const page=env.get('page');const url=`${env.baseUrl}/vodshow/${cate}--------${page}---.html`;const html=await req(url);const $=kitty.load(html);const movies=[];$('.public-list-box').each(function(){const a=$(this).find('a.public-list-exp');const id=a.attr('href')||'';const title=a.attr('title')||'';const img=$(this).find('img');const cover=img.attr('data-src')||img.attr('src')||'';const remark=$(this).find('.public-list-prb').text().trim()||$(this).find('.public-prt').text().trim();if(id&&id.includes('/detail/'))movies.push({id,title,cover,remark})});return movies",
+        "detail": "const id=env.get('movieId');const url=id.startsWith('http')?id:`${env.baseUrl}${id}`;const html=await req(url);const $=kitty.load(html);const title=$('.slide-info-title').text().trim()||$('title').text().split('-')[0].trim();const cover=$('.detail-pic img').attr('data-src')||$('.detail-pic img').attr('src')||'';const desc=$('.detail-content').text().trim();const playlist=[];const tabs=$('.anthology-tab a').toArray().map(el=>$(el).text().trim());const lists=$('.anthology-list-box').toArray();tabs.forEach((tabName,idx)=>{const episodes=[];$(lists[idx]).find('.anthology-list-play a').each(function(){const epUrl=$(this).attr('href')||'';const epText=$(this).text().trim();if(epUrl)episodes.push({id:'$'+env.baseUrl+epUrl,text:epText})});if(episodes.length)playlist.push({title:tabName,videos:episodes})});return{id,title,cover,desc,playlist}",
+        "search": "const wd=env.get('keyword');const url=`${env.baseUrl}/vodsearch/-------------.html?wd=${encodeURIComponent(wd)}`;const html=await req(url);const $=kitty.load(html);const movies=[];$('.public-list-box').each(function(){const a=$(this).find('a.public-list-exp');const id=a.attr('href')||'';const title=a.attr('title')||'';const img=$(this).find('img');const cover=img.attr('data-src')||img.attr('src')||'';if(id&&id.includes('/detail/'))movies.push({id,title,cover,remark:''})});return movies",
+        "parseIframe": "const iframe=env.get('iframe');try{const html=await req(iframe);const match=html.match(/var\\s+player_aaaa\\s*=\\s*(\\{[^<]+\\})/);if(match){const data=JSON.parse(match[1]);let videoUrl=data.url;if(data.encrypt==1){videoUrl=decodeURIComponent(videoUrl)}else if(data.encrypt==2){videoUrl=decodeURIComponent(atob(videoUrl))}if(videoUrl&&(videoUrl.includes('.m3u8')||videoUrl.includes('.mp4')))return videoUrl}return ''}catch(e){return ''}"
       },
       "sniffer": {
         "mode": 0,
-        "timeout": 30000,
-        "customRegex": "https?://play\\.kvmplay\\.org/m3/[^\"'\\s]+\\.m3u8|https?://[^\"'\\s]+\\.(m3u8|mp4)",
-        "exclude": "google|facebook|analytics|doubleclick|ads|monetag|baidu"
+        "timeout": 25000,
+        "customRegex": "https?://[^\"'\\s]+\\.(m3u8|mp4)",
+        "exclude": "google|facebook|analytics|doubleclick|ads"
       }
     }
   }
