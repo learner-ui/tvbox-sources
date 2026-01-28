@@ -1,32 +1,18 @@
 [
   {
-    "id": "netflixgc-source",
-    "name": "奈飞工厂",
-    "api": "https://www.netflixgc.org",
+    "id": "ffzy-source",
+    "name": "飞速资源",
+    "api": "https://api.ffzyapi.com/api.php/provide/vod",
     "nsfw": false,
-    "type": 1,
-    "extra": {
-      "gfw": false,
-      "searchLimit": 20,
-      "js": {
-        "category": [
-          { "text": "电影", "id": "1" },
-          { "text": "连续剧", "id": "2" },
-          { "text": "纪录片", "id": "24" },
-          { "text": "漫剧", "id": "3" },
-          { "text": "综艺", "id": "23" }
-        ],
-        "home": "const cate=env.get('category');const page=env.get('page');const url=`${env.baseUrl}/vodshow/${cate}--------${page}---.html`;const html=await req(url);const $=kitty.load(html);const movies=[];$('.public-list-box').each(function(){const a=$(this).find('a.public-list-exp');const id=a.attr('href')||'';const title=a.attr('title')||'';const img=$(this).find('img');const cover=img.attr('data-src')||img.attr('src')||'';const remark=$(this).find('.public-list-prb').text().trim()||$(this).find('.public-prt').text().trim();if(id&&id.includes('/detail/'))movies.push({id,title,cover,remark})});return movies",
-        "detail": "const id=env.get('movieId');const url=id.startsWith('http')?id:`${env.baseUrl}${id}`;const html=await req(url);const $=kitty.load(html);const title=$('.slide-info-title').text().trim()||$('title').text().split('-')[0].trim();const cover=$('.detail-pic img').attr('data-src')||$('.detail-pic img').attr('src')||'';const desc=$('.detail-content').text().trim();const playlist=[];const tabs=$('.anthology-tab a').toArray().map(el=>$(el).text().trim());const lists=$('.anthology-list-box').toArray();tabs.forEach((tabName,idx)=>{const episodes=[];$(lists[idx]).find('.anthology-list-play a').each(function(){const epUrl=$(this).attr('href')||'';const epText=$(this).text().trim();if(epUrl)episodes.push({id:'$'+env.baseUrl+epUrl,text:epText})});if(episodes.length)playlist.push({title:tabName,videos:episodes})});return{id,title,cover,desc,playlist}",
-        "search": "const wd=env.get('keyword');const url=`${env.baseUrl}/vodsearch/-------------.html?wd=${encodeURIComponent(wd)}`;const html=await req(url);const $=kitty.load(html);const movies=[];$('.public-list-box').each(function(){const a=$(this).find('a.public-list-exp');const id=a.attr('href')||'';const title=a.attr('title')||'';const img=$(this).find('img');const cover=img.attr('data-src')||img.attr('src')||'';if(id&&id.includes('/detail/'))movies.push({id,title,cover,remark:''})});return movies",
-        "parseIframe": "const iframe=env.get('iframe');try{const html=await req(iframe);const match=html.match(/var\\s+player_aaaa\\s*=\\s*(\\{[^<]+\\})/);if(match){const data=JSON.parse(match[1]);let videoUrl=data.url;if(data.encrypt==1){videoUrl=decodeURIComponent(videoUrl)}else if(data.encrypt==2){videoUrl=decodeURIComponent(atob(videoUrl))}if(videoUrl&&(videoUrl.includes('.m3u8')||videoUrl.includes('.mp4')))return videoUrl}return ''}catch(e){return ''}"
-      },
-      "sniffer": {
-        "mode": 0,
-        "timeout": 25000,
-        "customRegex": "https?://[^\"'\\s]+\\.(m3u8|mp4)",
-        "exclude": "google|facebook|analytics|doubleclick|ads"
-      }
-    }
+    "type": 0,
+    "desc": "高清影视资源，更新快"
+  },
+  {
+    "id": "lzzy-source",
+    "name": "量子资源",
+    "api": "https://cj.lziapi.com/api.php/provide/vod",
+    "nsfw": false,
+    "type": 0,
+    "desc": "海量影视资源"
   }
 ]
